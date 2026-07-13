@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>صدای دماوند</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g1: #0a1f12;
+  --g2: #1a3d2b;
+  --g3: #2d6a4f;
+  --g4: #52b788;
+  --gold: #f4a261;
+  --red: #e63946;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background: var(--g1);
+  color: white;
+  min-height: 100vh;
+}
+
+/* SPLASH */
+#splash {
+  position: fixed; inset:0;
+  background: linear-gradient(160deg, #0a1f12, #1a3d2b);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  transition: opacity 0.6s;
+}
+
+.sp-mountain { font-size: 80px; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+.sp-title { font-size: 28px; font-weight: 900; text-align: center; line-height: 1.3; }
+.sp-title span { color: var(--g4); }
+.sp-org { font-size: 12px; color: rgba(255,255,255,0.4); }
+.sp-credit { font-size: 10px; color: rgba(255,255,255,0.2); }
+
+.sp-bar { width: 120px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 8px; }
+.sp-bar-fill { height: 100%; width: 0; background: var(--g4); border-radius: 10px; animation: fill 2s ease forwards; }
+@keyframes fill { to { width: 100%; } }
+
+/* APP */
+#app { display: none; }
+
+.header {
+  background: linear-gradient(180deg, #0a1f12, var(--g2));
+  padding: 44px 20px 24px;
+  text-align: center;
+}
+
+.header-org { font-size: 11px; color: var(--g4); letter-spacing: 2px; margin-bottom: 6px; }
+.header-title { font-size: 24px; font-weight: 900; }
+.header-title span { color: var(--g4); }
+.header-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 6px; }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; padding: 14px; }
+
+.stat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(82,183,136,0.15);
+  border-radius: 14px;
+  padding: 12px 6px;
+  text-align: center;
+}
+
+.stat-n { font-size: 22px; font-weight: 900; color: var(--g4); }
+.stat-l { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+/* CTA */
+.cta { padding: 0 14px 10px; }
+
+.cta-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--g3), var(--g4));
+  border: none;
+  border-radius: 18px;
+  padding: 18px;
+  color: white;
+  font-family: 'Vazirmatn', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 30px rgba(82,183,136,0.3);
+  animation: glow 2.5s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,100% { box-shadow: 0 8px 30px rgba(82,183,136,0.3); }
+  50% { box-shadow: 0 8px 40px rgba(82,183,136,0.55); }
+}
+
+.cta-btn:active { transform: scale(0.98); }
+
+/* Steps */
+.steps {
+  padding: 0 14px;
+  display: none;
+  animation: up 0.3s ease;
+}
+
+.steps.open { display: block; }
+@keyframes up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* Step indicator */
+.step-ind {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 0 10px;
+}
+
+.step-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  transition: all 0.3s;
+}
+
+.step-dot.active { background: var(--g4); width: 20px; border-radius: 4px; }
+.step-dot.done { background: var(--g4); opacity: 0.5; }
+
+/* Step card */
+.step-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(82,183,136,0.12);
+  border-radius: 22px;
+  padding: 20px;
+  display: none;
+}
+
+.step-card.active { display: block; animation: up 0.3s ease; }
+
+.step-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--g4);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Type grid */
+.tgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+.titem {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(82,183,136,0.15);
+  border-radius: 14px;
+  padding: 12px 4px;
+  cursor: pointer;
+  text-align: center;
+  color: rgba(255,255,255,0.55);
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.titem span { font-size: 22px; display: block; margin-bottom: 4px; }
+.titem.on { background: rgba(82,183,136,0.18); border-color: var(--g4); color: white; }
+
+/* Urgency */
+.urow { display: flex; gap: 8px; margin-top: 14px; }
+
+.ubtn {
+  flex: 1; padding: 11px;
+  border-radius: 12px; border: 1.5px solid;
+  font-family: 'Vazirmatn', sans-serif;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer; opacity: 0.4; transition: all 0.2s;
+}
+
+.ubtn.low { border-color: var(--g4); color: var(--g4); background: rgba(82,183,136,0.06); }
+.ubtn.med { border-color: var(--gold); color: var(--gold); background: rgba(244,162,97,0.06); }
+.ubtn.hi { border-color: var(--red); color: var(--red); background: rgba(230,57,70,0.06); }
+.ubtn.on { opacity: 1; }
+
+/* Input */
+.finput {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(82,183,136,0.2);
+  border-radius: 12px;
+  padding: 13px 14px;
+  color: white;
+  font-family: 'Vazirmatn', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.finput:focus { border-color: var(--g4); }
+.finput::placeholder { color: rgba(255,255,255,0.2); }
+
+.flabel { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 7px; display: block; font-weight: 500; }
+
+/* GPS */
+.gpsbtn {
+  width: 100%;
+  background: rgba(82,183,136,0.1);
+  border: 1px solid rgba(82,183,136,0.25);
+  border-radius: 12px;
+  padding: 13px;
+  color: var(--g4);
+  font-family: 'Vazirmatn', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+
+.gpsbtn:active { background: rgba(82,183,136,0.2); }
+.gpsinfo { font-size: 11px; color: rgba(255,255,255,0.35); text-align: center; margin-top: 6px; min-height: 16px; }
+
+/* Photo */
+.photozone {
+  border: 2px dashed rgba(82,183,136,0.2);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.photozone input { position: absolute; inset:0; opacity:0; cursor:pointer; }
+.photozone:active { background: rgba(82,183,136,0.05); }
+.photozone .pico { font-size: 30px; margin-bottom: 6px; }
+.photozone p { font-size: 12px; color: rgba(255,255,255,0.35); }
+
+#prevImg { width:100%; max-height:160px; object-fit:cover; border-radius:12px; margin-top:10px; display:none; }
+
+/* Nav buttons */
+.navbtns { display: flex; gap: 8px; margin-top: 16px; }
+
+.nbtn {
+  flex: 1; padding: 14px;
+  border-radius: 14px; border: none;
+  font-family: 'Vazirmatn', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+
+.nbtn.back { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.6); }
+.nbtn.next { background: linear-gradient(135deg, var(--g3), var(--g4)); color: white; box-shadow: 0 4px 16px rgba(82,183,136,0.25); }
+.nbtn:active { transform: scale(0.97); }
+
+/* Recent */
+.sec-title { padding: 16px 14px 8px; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.35); display: flex; align-items: center; gap: 6px; }
+
+.rcard {
+  margin: 0 14px 9px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(82,183,136,0.08);
+  border-radius: 16px;
+  padding: 13px;
+  display: flex; gap: 11px; align-items: center;
+}
+
+.rico { width: 42px; height: 42px; background: rgba(82,183,136,0.1); border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.rbody { flex: 1; }
+.rtitle { font-size: 13px; font-weight: 600; }
+.rloc { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 3px; }
+.rbadge { font-size: 10px; padding: 2px 8px; border-radius: 20px; margin-top: 4px; display: inline-block; font-weight: 600; }
+.bn { background: rgba(82,183,136,0.15); color: var(--g4); }
+.bf { background: rgba(244,162,97,0.15); color: var(--gold); }
+.bu { background: rgba(230,57,70,0.15); color: var(--red); }
+
+/* Bottom nav */
+.bnav {
+  position: fixed; bottom:0; left:0; right:0;
+  background: rgba(10,31,18,0.97);
+  border-top: 1px solid rgba(82,183,136,0.1);
+  backdrop-filter: blur(20px);
+  display: flex;
+  padding: 8px 0 18px;
+  z-index: 90;
+}
+
+.bni {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px; cursor: pointer; color: rgba(255,255,255,0.25);
+  border: none; background: none; font-family: 'Vazirmatn', sans-serif;
+  transition: color 0.2s;
+}
+
+.bni.active { color: var(--g4); }
+.bni-ico { font-size: 21px; }
+.bni-lbl { font-size: 10px; }
+
+.pb { height: 85px; }
+
+/* Credit */
+.credit { text-align: center; padding: 8px; font-size: 10px; color: rgba(255,255,255,0.18); line-height: 1.9; }
+
+/* Modal */
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; align-items:center; justify-content:center; padding:20px; }
+.modal.show { display: flex; }
+
+.mbox {
+  background: linear-gradient(160deg, #1a3d2b, #0d2a1a);
+  border: 1px solid rgba(82,183,136,0.3);
+  border-radius: 26px;
+  padding: 32px 22px;
+  text-align: center;
+  max-width: 300px; width: 100%;
+  animation: pop 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+
+@keyframes pop { from{opacity:0;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+
+.memo { font-size: 58px; margin-bottom: 14px; }
+.mtitle { font-size: 21px; font-weight: 900; margin-bottom: 8px; }
+.mcode { background: rgba(82,183,136,0.12); border: 1px solid rgba(82,183,136,0.2); border-radius: 10px; padding: 10px; margin: 12px 0; font-size: 20px; font-weight: 900; color: var(--g4); letter-spacing: 3px; }
+.mtext { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.7; }
+.mclose { width:100%; background: var(--g3); border:none; border-radius:13px; padding:13px; color:white; font-family:'Vazirmatn',sans-serif; font-size:14px; font-weight:700; cursor:pointer; margin-top:14px; }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-mountain">🏔️</div>
+  <div class="sp-title">صدای <span>دماوند</span></div>
+  <div class="sp-org">انجمن عمران محیط‌زیست دماوند</div>
+  <div class="sp-credit">طراحی و اجرا: شادنوش شریفی</div>
+  <div class="sp-bar"><div class="sp-bar-fill"></div></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <div class="header">
+    <div class="header-org">🌿 انجمن عمران محیط‌زیست دماوند</div>
+    <div class="header-title">صدای <span>دماوند</span></div>
+    <div class="header-sub">هر تخلفی دیدی ثبت کن — ما پیگیری می‌کنیم</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="sT">۲</div><div class="stat-l">گزارش کل</div></div>
+    <div class="stat"><div class="stat-n" id="sF">۱</div><div class="stat-l">در پیگیری</div></div>
+    <div class="stat"><div class="stat-n" id="sS">۰</div><div class="stat-l">حل‌شده</div></div>
+  </div>
+
+  <div class="cta">
+    <button class="cta-btn" onclick="openForm()">
+      <span>📍</span> ثبت گزارش جدید
+    </button>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps" id="steps">
+
+    <div class="step-ind">
+      <div class="step-dot active" id="d0"></div>
+      <div class="step-dot" id="d1"></div>
+      <div class="step-dot" id="d2"></div>
+      <div class="step-dot" id="d3"></div>
+    </div>
+
+    <!-- Step 1: Type -->
+    <div class="step-card active" id="s0">
+      <div class="step-title">🔎 مرحله ۱ از ۴ — نوع تخلف</div>
+      <div class="tgrid">
+        <div class="titem" onclick="pick(this,'آلودگی آب')"><span>💧</span>آلودگی آب</div>
+        <div class="titem" onclick="pick(this,'قطع درخت')"><span>🌳</span>قطع درخت</div>
+        <div class="titem" onclick="pick(this,'زباله')"><span>🗑️</span>زباله</div>
+        <div class="titem" onclick="pick(this,'شکار غیرمجاز')"><span>🦌</span>شکار</div>
+        <div class="titem" onclick="pick(this,'ساخت غیرمجاز')"><span>🏗️</span>ساخت غیرمجاز</div>
+        <div class="titem" onclick="pick(this,'سایر')"><span>⚠️</span>سایر</div>
+      </div>
+      <div class="urow">
+        <button class="ubtn low on" onclick="urg(this,'کم')">کم‌اهمیت</button>
+        <button class="ubtn med" onclick="urg(this,'متوسط')">متوسط</button>
+        <button class="ubtn hi" onclick="urg(this,'فوری')">🚨 فوری</button>
+      </div>
+      <div class="navbtns">
+        <button class="nbtn back" onclick="closeForm()">انصراف</button>
+        <button class="nbtn next" onclick="goStep(1)">بعدی ←</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Location -->
+    <div class="step-card" id="s1">
+      <div class="step-title">📍 مرحله ۲ از ۴ — مکان</div>
+      <label class="flabel">نام روستا یا مکان *</label>
+      <input class="finput" id="fLoc" type="text" placeholder="مثلاً: روستای نانه، مسیر رینه...">
+      <a href="https://maps.google.com" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.25);border-radius:12px;padding:13px;color:var(--g4);font-family:Vazirmatn,sans-serif;font-size:13px;font-weight:600;text-decoration:none;margin-top:10px;">🗺️ باز کردن گوگل مپ برای کپی موقعیت</a>
+      <button class="gpsbtn" onclick="getGPS()">📡 دریافت موقعیت فعلی من (GPS)</button>
+      <div class="gpsinfo" id="gpsInfo">موقعیت رو از گوگل مپ کپی کن و اینجا بذار، یا از دکمه‌ی بالا استفاده کن</div>
+      <input class="finput" id="gpsInput" type="text" placeholder="مثلاً: 35.95123, 52.10456" style="margin-top:8px">
+      <div class="navbtns">
+        <button class="nbtn back" onclick="goStep(0)">← قبلی</button>
+        <button class="nbtn next" onclick="goStep(2)">بعدی ←</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Photo -->
+    <div class="step-card" id="s2">
+      <div class="step-title">📷 مرحله ۳ از ۴ — عکس</div>
+      <div class="photozone" onclick="document.getElementById('fPh').click()">
+        <input type="file" id="fPh" accept="image/*" onchange="prevPhoto(this)">
+        <div class="pico">📸</div>
+        <p>لمس کنید تا عکس اضافه کنید</p>
+      </div>
+      <img id="prevImg">
+      <div class="navbtns">
+        <button class="nbtn back" onclick="goStep(1)">← قبلی</button>
+        <button class="nbtn next" onclick="goStep(3)">بعدی ←</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Contact + Submit -->
+    <div class="step-card" id="s3">
+      <div class="step-title">✅ مرحله ۴ از ۴ — ارسال</div>
+      <label class="flabel">توضیحات (اختیاری)</label>
+      <textarea class="finput" id="fDesc" placeholder="جزئیات بیشتر..." style="min-height:65px;resize:none;margin-bottom:12px"></textarea>
+      <label class="flabel">اطلاعات تماس (اختیاری)</label>
+      <input class="finput" id="fCont" type="text" placeholder="شماره یا ایمیل برای پیگیری" style="margin-bottom:0">
+      <div class="navbtns">
+        <button class="nbtn back" onclick="goStep(2)">← قبلی</button>
+        <button class="nbtn next" onclick="submit()" style="background:linear-gradient(135deg,#1a6b3a,#52b788)">ارسال گزارش ✅</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recent -->
+  <div class="sec-title">📌 گزارش‌های اخیر</div>
+  <div id="rlist">
+    <div class="rcard">
+      <div class="rico">💧</div>
+      <div class="rbody">
+        <div class="rtitle">آلودگی آب رودخانه هراز</div>
+        <div class="rloc">📍 آبعلی — ۲ ساعت پیش</div>
+        <span class="rbadge bf">در پیگیری</span>
+      </div>
+    </div>
+    <div class="rcard">
+      <div class="rico">🌳</div>
+      <div class="rbody">
+        <div class="rtitle">قطع درخت بلوط</div>
+        <div class="rloc">📍 روستای نانه — دیروز</div>
+        <span class="rbadge bn">گزارش جدید</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="credit">
+    انجمن عمران محیط‌زیست دماوند<br>
+    طراحی و اجرا: شادنوش شریفی
+  </div>
+
+  <div class="pb"></div>
+
+  <div class="bnav">
+    <button class="bni active"><span class="bni-ico">🏠</span><span class="bni-lbl">خانه</span></button>
+    <button class="bni" style="opacity:0.4" onclick="alert('🗺️ نقشه‌ی گزارش‌ها به‌زودی فعال می‌شه.')"><span class="bni-ico">🗺️</span><span class="bni-lbl">نقشه</span></button>
+    <button class="bni" style="opacity:0.4" onclick="alert('📊 آمار تفصیلی به‌زودی فعال می‌شه.')"><span class="bni-ico">📊</span><span class="bni-lbl">آمار</span></button>
+    <button class="bni" onclick="alert('صدای دماوند\\nانجمن عمران محیط‌زیست دماوند\\n\\nگزارش‌هایی که ثبت می‌کنید (شامل عکس، مکان و توضیحات) فقط برای بررسی و پیگیری در اختیار انجمن قرار می‌گیرد و به‌صورت عمومی منتشر نمی‌شود. اطلاعات تماس اختیاری است و فقط در صورت نیاز به پیگیری استفاده می‌شود.')"><span class="bni-ico">ℹ️</span><span class="bni-lbl">درباره</span></button>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="mbox">
+    <div class="memo">🌿</div>
+    <div class="mtitle">گزارش ثبت شد!</div>
+    <div class="mcode" id="mCode">DM-0000</div>
+    <div class="mtext">گزارش شما توسط انجمن محیط زیست دماوند پیگیری می‌شه. کد رهگیری رو نگه دار.</div>
+    <button class="mclose" onclick="closeModal()">متوجه شدم ✓</button>
+  </div>
+</div>
+
+<script>
+const p = function(n){ return n.toString().replace(/\d/g, function(d){ return '۰۱۲۳۴۵۶۷۸۹'[d]; }); };
+
+// Splash
+setTimeout(()=>{
+  document.getElementById('splash').style.opacity='0';
+  setTimeout(()=>{
+    document.getElementById('splash').style.display='none';
+    document.getElementById('app').style.display='block';
+  },600);
+},2200);
+
+let selType='', selUrg='کم', gps=null, total=2, follow=1, solved=0, curStep=0;
+
+function updateStats(){
+  document.getElementById('sT').textContent=p(total);
+  document.getElementById('sF').textContent=p(follow);
+  document.getElementById('sS').textContent=p(solved);
+}
+
+function openForm(){
+  document.getElementById('steps').classList.add('open');
+  setTimeout(()=>document.getElementById('steps').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function closeForm(){
+  document.getElementById('steps').classList.remove('open');
+  goStep(0,true);
+}
+
+function goStep(n, reset){
+  if(!reset && n===1 && !selType){ alert('لطفاً نوع تخلف رو انتخاب کن'); return; }
+  if(!reset && n===2 && !document.getElementById('fLoc').value.trim()){ alert('لطفاً محل مشاهده رو وارد کن'); return; }
+  document.getElementById('s'+curStep).classList.remove('active');
+  document.getElementById('d'+curStep).classList.remove('active');
+  document.getElementById('d'+curStep).classList.add('done');
+  curStep=n;
+  document.getElementById('s'+n).classList.add('active');
+  document.querySelectorAll('.step-dot').forEach((d,i)=>{
+    d.classList.remove('active','done');
+    if(i<n) d.classList.add('done');
+    if(i===n) d.classList.add('active');
+  });
+  document.getElementById('steps').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function pick(el,t){
+  document.querySelectorAll('.titem').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on'); selType=t;
+}
+
+function urg(el,u){
+  document.querySelectorAll('.ubtn').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on'); selUrg=u;
+}
+
+function getGPS(){
+  const info=document.getElementById('gpsInfo');
+  info.textContent='⏳ در حال دریافت...';
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      pos=>{
+        gps={lat:pos.coords.latitude.toFixed(5),lng:pos.coords.longitude.toFixed(5)};
+        info.textContent=`✅ ${gps.lat}, ${gps.lng}`;
+        document.getElementById('gpsInput').value=`${gps.lat}, ${gps.lng}`;
+      },
+      ()=>{info.textContent='❌ دسترسی ممکن نشد، از گوگل مپ استفاده کن';}
+    );
+  } else info.textContent='❌ مرورگر پشتیبانی نمی‌کند';
+}
+
+let photoDataURL=null;
+function prevPhoto(input){
+  const img=document.getElementById('prevImg');
+  if(input.files&&input.files[0]){
+    const r=new FileReader();
+    r.onload=e=>{
+      const tmp=new Image();
+      tmp.onload=()=>{
+        const maxW=1000;
+        const scale=Math.min(1,maxW/tmp.width);
+        const canvas=document.createElement('canvas');
+        canvas.width=tmp.width*scale;
+        canvas.height=tmp.height*scale;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(tmp,0,0,canvas.width,canvas.height);
+        const compressed=canvas.toDataURL('image/jpeg',0.6);
+        img.src=compressed;
+        img.style.display='block';
+        photoDataURL=compressed;
+      };
+      tmp.src=e.target.result;
+    };
+    r.readAsDataURL(input.files[0]);
+  }
+}
+
+// آدرس Web App گوگل اسکریپت — بعد از دیپلوی، این مقدار را با لینک واقعی جایگزین کن
+const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyIYtq9yl-SDNFMByFhJH0jYyPCWziKSet1AUJYFT7K7709EW6-h31VVq0TUvjeGjQbeQ/exec';
+
+async function submit(){
+  const loc=document.getElementById('fLoc').value.trim();
+  const gpsVal=document.getElementById('gpsInput').value.trim();
+  const desc=document.getElementById('fDesc').value.trim();
+  const cont=document.getElementById('fCont').value.trim();
+  const photoInput=document.getElementById('fPh');
+  const icons={'آلودگی آب':'💧','قطع درخت':'🌳','زباله':'🗑️','شکار غیرمجاز':'🦌','ساخت غیرمجاز':'🏗️','سایر':'⚠️'};
+  const badgeClass=selUrg==='فوری'?'bu':'bn';
+  const badgeText=selUrg==='فوری'?'🚨 فوری':'گزارش جدید';
+  const code='DM-'+Math.floor(1000+Math.random()*9000);
+
+  const btn=document.querySelector('#s3 .nbtn.next');
+  const btnOriginal=btn.textContent;
+  btn.textContent='⏳ در حال ارسال...';
+  btn.disabled=true;
+
+  try{
+    const payload={
+      code:code,
+      type:selType||'—',
+      urgency:selUrg,
+      location:loc||'—',
+      gps:gpsVal||'—',
+      description:desc||'—',
+      contact:cont||'—',
+      photo:(photoInput.files && photoInput.files[0]) ? photoDataURL : null
+    };
+
+    // توجه: بدون هدر Content-Type ارسال می‌شود تا مرورگر preflight نزند
+    // (گوگل اسکریپت با آن به‌درستی کار نمی‌کند). سمت اسکریپت با JSON.parse خوانده می‌شود.
+    const res=await fetch(GAS_ENDPOINT,{
+      method:'POST',
+      body:JSON.stringify(payload)
+    });
+
+    const result=await res.json();
+    if(!result.ok) throw new Error(result.error||'ارسال ناموفق');
+
+    const card=document.createElement('div');
+    card.className='rcard';
+    card.innerHTML=`<div class="rico">${icons[selType]||'⚠️'}</div><div class="rbody"><div class="rtitle">${selType}</div><div class="rloc">📍 ${loc} — همین الان</div><span class="rbadge ${badgeClass}">${badgeText}</span></div>`;
+    document.getElementById('rlist').insertBefore(card,document.getElementById('rlist').firstChild);
+
+    total++; follow++; updateStats();
+    document.getElementById('mCode').textContent=code;
+    document.getElementById('modal').classList.add('show');
+    closeForm();
+  }catch(err){
+    alert('⚠️ ارسال گزارش با خطا مواجه شد. لطفاً اتصال اینترنت را بررسی کن و دوباره تلاش کن.');
+  }finally{
+    btn.textContent=btnOriginal;
+    btn.disabled=false;
+  }
+}
+
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+
+updateStats();
+</script>
+</body>
+</html>
