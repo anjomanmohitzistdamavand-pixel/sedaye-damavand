@@ -1,0 +1,27 @@
+{
+  "name": "صدای دماوند",
+  "short_name": "صدای دماوند",
+  "description": "سامانه‌ی ثبت گزارش مردمی تخلفات زیست‌محیطی — انجمن عمران محیط‌زیست دماوند",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0A1F12",
+  "theme_color": "#2D6A4F",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "fa",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
