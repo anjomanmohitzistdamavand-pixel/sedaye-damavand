@@ -8,5 +8,15 @@
         "95:D3:91:FD:9F:E5:34:1C:50:DF:3E:31:D4:07:F4:E9:C7:05:31:DA:2F:2C:87:DD:97:D7:A5:6C:6C:34:D1:5C"
       ]
     }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "cafebazaar_twa",
+      "package_name": "io.github.anjomanmohitzistdamavand_pixel.twa",
+      "sha256_cert_fingerprints": [
+        "95:D3:91:FD:9F:E5:34:1C:50:DF:3E:31:D4:07:F4:E9:C7:05:31:DA:2F:2C:87:DD:97:D7:A5:6C:6C:34:D1:5C"
+      ]
+    }
   }
 ]
