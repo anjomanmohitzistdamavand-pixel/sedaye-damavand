@@ -12,6 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="صدای دماوند">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root {
   --g1: #0a1f12;
@@ -31,7 +33,6 @@ body {
   min-height: 100vh;
 }
 
-/* SPLASH */
 #splash {
   position: fixed; inset:0;
   background: linear-gradient(160deg, #0a1f12, #1a3d2b);
@@ -56,7 +57,6 @@ body {
 .sp-bar-fill { height: 100%; width: 0; background: var(--g4); border-radius: 10px; animation: fill 2s ease forwards; }
 @keyframes fill { to { width: 100%; } }
 
-/* APP */
 #app { display: none; }
 
 .header {
@@ -70,7 +70,6 @@ body {
 .header-title span { color: var(--g4); }
 .header-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 6px; }
 
-/* Stats */
 .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; padding: 14px; }
 
 .stat {
@@ -84,7 +83,6 @@ body {
 .stat-n { font-size: 22px; font-weight: 900; color: var(--g4); }
 .stat-l { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
 
-/* CTA */
 .cta { padding: 0 14px 10px; }
 
 .cta-btn {
@@ -113,7 +111,6 @@ body {
 
 .cta-btn:active { transform: scale(0.98); }
 
-/* Steps */
 .steps {
   padding: 0 14px;
   display: none;
@@ -123,7 +120,6 @@ body {
 .steps.open { display: block; }
 @keyframes up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
-/* Step indicator */
 .step-ind {
   display: flex;
   align-items: center;
@@ -142,7 +138,6 @@ body {
 .step-dot.active { background: var(--g4); width: 20px; border-radius: 4px; }
 .step-dot.done { background: var(--g4); opacity: 0.5; }
 
-/* Step card */
 .step-card {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(82,183,136,0.12);
@@ -163,7 +158,6 @@ body {
   gap: 7px;
 }
 
-/* Type grid */
 .tgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 
 .titem {
@@ -181,7 +175,6 @@ body {
 .titem span { font-size: 22px; display: block; margin-bottom: 4px; }
 .titem.on { background: rgba(82,183,136,0.18); border-color: var(--g4); color: white; }
 
-/* Urgency */
 .urow { display: flex; gap: 8px; margin-top: 14px; }
 
 .ubtn {
@@ -197,7 +190,6 @@ body {
 .ubtn.hi { border-color: var(--red); color: var(--red); background: rgba(230,57,70,0.06); }
 .ubtn.on { opacity: 1; }
 
-/* Input */
 .finput {
   width: 100%;
   background: rgba(255,255,255,0.07);
@@ -216,7 +208,6 @@ body {
 
 .flabel { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 7px; display: block; font-weight: 500; }
 
-/* GPS */
 .gpsbtn {
   width: 100%;
   background: rgba(82,183,136,0.1);
@@ -235,7 +226,25 @@ body {
 .gpsbtn:active { background: rgba(82,183,136,0.2); }
 .gpsinfo { font-size: 11px; color: rgba(255,255,255,0.35); text-align: center; margin-top: 6px; min-height: 16px; }
 
-/* Photo */
+.mappick-wrap {
+  width: 100%;
+  height: 210px;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 10px;
+  border: 1px solid rgba(82,183,136,0.25);
+  position: relative;
+}
+
+#mapPick { width: 100%; height: 100%; }
+
+.map-hint {
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+  margin-top: 8px;
+}
+
 .photozone {
   border: 2px dashed rgba(82,183,136,0.2);
   border-radius: 16px;
@@ -253,7 +262,6 @@ body {
 
 #prevImg { width:100%; max-height:160px; object-fit:cover; border-radius:12px; margin-top:10px; display:none; }
 
-/* Nav buttons */
 .navbtns { display: flex; gap: 8px; margin-top: 16px; }
 
 .nbtn {
@@ -268,7 +276,6 @@ body {
 .nbtn.next { background: linear-gradient(135deg, var(--g3), var(--g4)); color: white; box-shadow: 0 4px 16px rgba(82,183,136,0.25); }
 .nbtn:active { transform: scale(0.97); }
 
-/* Recent */
 .sec-title { padding: 16px 14px 8px; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.35); display: flex; align-items: center; gap: 6px; }
 
 .rcard {
@@ -290,7 +297,6 @@ body {
 .bu { background: rgba(230,57,70,0.15); color: var(--red); }
 .bs { background: rgba(244,162,97,0.18); color: var(--gold); }
 
-/* Bottom nav */
 .bnav {
   position: fixed; bottom:0; left:0; right:0;
   background: rgba(10,31,18,0.97);
@@ -314,10 +320,8 @@ body {
 
 .pb { height: 85px; }
 
-/* Credit */
 .credit { text-align: center; padding: 8px; font-size: 10px; color: rgba(255,255,255,0.18); line-height: 1.9; }
 
-/* Modal */
 .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; align-items:center; justify-content:center; padding:20px; }
 .modal.show { display: flex; }
 
@@ -358,7 +362,6 @@ body {
 </head>
 <body>
 
-<!-- SPLASH -->
 <div id="splash">
   <div class="sp-mountain">🏔️</div>
   <div class="sp-title">صدای <span>دماوند</span></div>
@@ -367,7 +370,6 @@ body {
   <div class="sp-bar"><div class="sp-bar-fill"></div></div>
 </div>
 
-<!-- APP -->
 <div id="app">
 
   <div class="header">
@@ -388,7 +390,6 @@ body {
     </button>
   </div>
 
-  <!-- STEPS -->
   <div class="steps" id="steps">
 
     <div class="step-ind">
@@ -398,7 +399,6 @@ body {
       <div class="step-dot" id="d3"></div>
     </div>
 
-    <!-- Step 1: Type -->
     <div class="step-card active" id="s0">
       <div class="step-title">🔎 مرحله ۱ از ۴ — نوع تخلف</div>
       <div class="tgrid">
@@ -420,22 +420,26 @@ body {
       </div>
     </div>
 
-    <!-- Step 2: Location -->
     <div class="step-card" id="s1">
       <div class="step-title">📍 مرحله ۲ از ۴ — مکان</div>
       <label class="flabel">نام روستا یا مکان *</label>
       <input class="finput" id="fLoc" type="text" placeholder="مثلاً: روستای نانه، مسیر رینه...">
-      <a href="https://maps.google.com" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.25);border-radius:12px;padding:13px;color:var(--g4);font-family:Vazirmatn,sans-serif;font-size:13px;font-weight:600;text-decoration:none;margin-top:10px;">🗺️ باز کردن گوگل مپ برای کپی موقعیت</a>
-      <button class="gpsbtn" onclick="getGPS()">📡 دریافت موقعیت فعلی من (GPS)</button>
-      <div class="gpsinfo" id="gpsInfo">موقعیت رو از گوگل مپ کپی کن و اینجا بذار، یا از دکمه‌ی بالا استفاده کن</div>
-      <input class="finput" id="gpsInput" type="text" placeholder="مثلاً: 35.95123, 52.10456" style="margin-top:8px">
+
+      <div class="mappick-wrap">
+        <div id="mapPick"></div>
+      </div>
+      <div class="map-hint">📍 روی نقشه لمس کن تا موقعیت دقیق تخلف ثبت بشه</div>
+
+      <button class="gpsbtn" onclick="getGPS()">📡 یا از موقعیت فعلی من استفاده کن (GPS)</button>
+      <div class="gpsinfo" id="gpsInfo">هنوز موقعیتی انتخاب نشده</div>
+      <input class="finput" id="gpsInput" type="text" placeholder="موقعیت انتخاب‌شده اینجا نشان داده می‌شود" style="margin-top:8px" readonly>
+
       <div class="navbtns">
         <button class="nbtn back" onclick="goStep(0)">← قبلی</button>
         <button class="nbtn next" onclick="goStep(2)">بعدی ←</button>
       </div>
     </div>
 
-    <!-- Step 3: Photo -->
     <div class="step-card" id="s2">
       <div class="step-title">📷 مرحله ۳ از ۴ — عکس</div>
       <div class="photozone" onclick="document.getElementById('fPh').click()">
@@ -450,7 +454,6 @@ body {
       </div>
     </div>
 
-    <!-- Step 4: Contact + Submit -->
     <div class="step-card" id="s3">
       <div class="step-title">✅ مرحله ۴ از ۴ — ارسال</div>
       <label class="flabel">توضیحات (اختیاری)</label>
@@ -465,7 +468,6 @@ body {
 
   </div>
 
-  <!-- Recent -->
   <div class="sec-title">📌 گزارش‌های اخیر</div>
   <div id="rlist">
     <div style="text-align:center;color:rgba(255,255,255,0.4);font-size:12px;padding:20px 0;">در حال بارگذاری...</div>
@@ -487,7 +489,6 @@ body {
 
 </div>
 
-<!-- Modal -->
 <div class="modal" id="modal">
   <div class="mbox">
     <div class="memo">🌿</div>
@@ -498,7 +499,6 @@ body {
   </div>
 </div>
 
-<!-- About / Legal Modal -->
 <div class="modal" id="aboutModal">
   <div class="abox">
     <div class="atitle">صدای دماوند 🌿</div>
@@ -508,7 +508,7 @@ body {
     <div class="atext">«صدای دماوند» یک سامانه‌ی ساده و رایگان برای ثبت گزارش مردمی تخلفات زیست‌محیطی در منطقه‌ی دماوند است. هر شهروند می‌تواند با چند ضربه، موارد مشاهده‌شده مانند آلودگی آب، قطع غیرمجاز درخت، تخلیه‌ی زباله، شکار غیرمجاز یا ساخت‌وساز غیرمجاز را به‌طور مستقیم برای انجمن ارسال کند.</div>
 
     <div class="asec">چطور کار می‌کند؟</div>
-    <div class="atext">۱. روی «ثبت گزارش جدید» بزنید و نوع تخلف را انتخاب کنید<br>۲. موقعیت مکانی را وارد کنید یا از GPS استفاده کنید<br>۳. در صورت تمایل یک عکس از محل ضمیمه کنید<br>۴. گزارش را ارسال کنید و کد پیگیری دریافت کنید<br>هر گزارش بلافاصله برای انجمن ارسال و در سامانه‌ی داخلی ثبت می‌شود.</div>
+    <div class="atext">۱. روی «ثبت گزارش جدید» بزنید و نوع تخلف را انتخاب کنید<br>۲. روی نقشه لمس کنید تا موقعیت دقیق ثبت شود، یا از GPS استفاده کنید<br>۳. در صورت تمایل یک عکس از محل ضمیمه کنید<br>۴. گزارش را ارسال کنید و کد پیگیری دریافت کنید<br>هر گزارش بلافاصله برای انجمن ارسال و در سامانه‌ی داخلی ثبت می‌شود.</div>
 
     <div class="asec">هدف سامانه</div>
     <div class="atext">این سامانه با هدف مشارکت مردمی در شناسایی و گزارش تخلفات زیست‌محیطی منطقه‌ی دماوند راه‌اندازی شده و فاقد هرگونه جنبه‌ی انتفاعی است.</div>
@@ -526,7 +526,6 @@ body {
   </div>
 </div>
 
-<!-- Stats Modal -->
 <div class="modal" id="statsModal">
   <div class="abox">
     <div class="atitle">📊 آمار گزارش‌ها</div>
@@ -545,7 +544,6 @@ body {
 <script>
 const p = function(n){ return n.toString().replace(/\d/g, function(d){ return '۰۱۲۳۴۵۶۷۸۹'[d]; }); };
 
-// Splash
 setTimeout(()=>{
   document.getElementById('splash').style.opacity='0';
   setTimeout(()=>{
@@ -635,6 +633,34 @@ function closeForm(){
   goStep(0,true);
 }
 
+let pickMap = null, pickMarker = null;
+
+function initPickMap(){
+  if(pickMap) return;
+  pickMap = L.map('mapPick', {zoomControl:true}).setView([35.9497, 52.1097], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '© OpenStreetMap'
+  }).addTo(pickMap);
+  pickMap.on('click', function(e){
+    setPickedLocation(e.latlng.lat, e.latlng.lng);
+  });
+}
+
+function setPickedLocation(lat, lng){
+  const latF = lat.toFixed(5), lngF = lng.toFixed(5);
+  gps = {lat: latF, lng: lngF};
+  document.getElementById('gpsInput').value = `${latF}, ${lngF}`;
+  document.getElementById('gpsInfo').textContent = `✅ موقعیت ثبت شد: ${latF}, ${lngF}`;
+  if(pickMap){
+    if(pickMarker){
+      pickMarker.setLatLng([lat,lng]);
+    } else {
+      pickMarker = L.marker([lat,lng]).addTo(pickMap);
+    }
+  }
+}
+
 function goStep(n, reset){
   if(!reset && n===1 && !selType){ alert('لطفاً نوع تخلف رو انتخاب کن'); return; }
   if(!reset && n===2 && !document.getElementById('fLoc').value.trim()){ alert('لطفاً محل مشاهده رو وارد کن'); return; }
@@ -649,6 +675,12 @@ function goStep(n, reset){
     if(i===n) d.classList.add('active');
   });
   document.getElementById('steps').scrollIntoView({behavior:'smooth',block:'start'});
+  if(n===1){
+    setTimeout(()=>{
+      initPickMap();
+      if(pickMap) pickMap.invalidateSize();
+    }, 150);
+  }
 }
 
 function pick(el,t){
@@ -667,11 +699,11 @@ function getGPS(){
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
       pos=>{
-        gps={lat:pos.coords.latitude.toFixed(5),lng:pos.coords.longitude.toFixed(5)};
-        info.textContent=`✅ ${gps.lat}, ${gps.lng}`;
-        document.getElementById('gpsInput').value=`${gps.lat}, ${gps.lng}`;
+        const lat=pos.coords.latitude, lng=pos.coords.longitude;
+        setPickedLocation(lat, lng);
+        if(pickMap){ pickMap.setView([lat,lng], 15); }
       },
-      ()=>{info.textContent='❌ دسترسی ممکن نشد، از گوگل مپ استفاده کن';}
+      ()=>{info.textContent='❌ دسترسی ممکن نشد، روی نقشه لمس کن';}
     );
   } else info.textContent='❌ مرورگر پشتیبانی نمی‌کند';
 }
@@ -702,7 +734,6 @@ function prevPhoto(input){
   }
 }
 
-// آدرس Web App گوگل اسکریپت — بعد از دیپلوی، این مقدار را با لینک واقعی جایگزین کن
 const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyIYtq9yl-SDNFMByFhJH0jYyPCWziKSet1AUJYFT7K7709EW6-h31VVq0TUvjeGjQbeQ/exec';
 loadStats();
 
@@ -734,8 +765,6 @@ async function submit(){
       photo:(photoInput.files && photoInput.files[0]) ? photoDataURL : null
     };
 
-    // توجه: بدون هدر Content-Type ارسال می‌شود تا مرورگر preflight نزند
-    // (گوگل اسکریپت با آن به‌درستی کار نمی‌کند). سمت اسکریپت با JSON.parse خوانده می‌شود.
     const res=await fetch(GAS_ENDPOINT,{
       method:'POST',
       body:JSON.stringify(payload)
